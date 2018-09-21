@@ -43,6 +43,10 @@ class Hero:
         # Add ability to abilities list
         self.weapons.append(weapon)
 
+    def add_armor(self, armor):
+        # Add ability to abilities list
+        self.weapons.append(armor)
+
     def attack(self):
         # Run attack() on every ability hero has
         total_damage = 0
@@ -135,6 +139,8 @@ class Team:
     def defend(self, damage_amt):
         # This method should calculate our team's total defense.
         # Any damage in excess of our team's total defense should be evenly distributed amongst all heroes with the deal_damage() method.
+        total_team_defense = 0
+
         for hero in self.heroes:
             total_team_defense += hero.defend()
 
@@ -209,9 +215,11 @@ class Arena:
                 self.good_guys_team.add_hero(
                     Hero(input("Name one of your favorite heroes (you'll get to name {} total): ".format(good_guys_team_size))))
                 self.good_guys_team.heroes[good_guy_index].add_ability(Ability(
-                    input("What's their superpower?: "), input("How powerful is it? (0-100): ")))
+                    input("What's their superpower?: "), input("How powerful is it? (0-80): ")))
                 self.good_guys_team.heroes[good_guy_index].add_weapon(Weapon(
-                    input("Do they have a weapon, too? If so, what is it: "), input("How powerful is it? (0-100): ")))
+                    input("Do they have a weapon, too? If so, what is it: "), input("How powerful is it? (0-60): ")))
+                self.good_guys_team.heroes[good_guy_index].add_armor(Armor(
+                    input("What kind of armor do they have: "), input("How powerful is it? (0-40): ")))
                 good_guy_index += 1
 
             else:
@@ -230,9 +238,11 @@ class Arena:
                 self.villains_team.add_hero(
                     Hero(input("Name one of your favorite villains (you'll get to name {} total): ".format(villains_team_size))))
                 self.villains_team.heroes[villain_index].add_ability(Ability(
-                    input("What's their superpower?: "), input("How powerful is it? (0-100): ")))
+                    input("What's their superpower?: "), input("How powerful is it? (0-80): ")))
                 self.villains_team.heroes[villain_index].add_weapon(Weapon(
-                    input("Do they have a weapon, too? If so, what is it: "), input("How powerful is it? (0-100): ")))
+                    input("Do they have a weapon, too? If so, what is it: "), input("How powerful is it? (0-60): ")))
+                self.villains_team.heroes[villain_index].add_armor(Armor(
+                    input("What kind of armor do they have: "), input("How powerful is it? (0-40): ")))
                 villain_index += 1
 
             else:
