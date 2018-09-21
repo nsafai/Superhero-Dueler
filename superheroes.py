@@ -129,7 +129,8 @@ class Team:
         for hero in self.heroes:
             total_team_damage += hero.attack()
 
-        return total_team_damage
+        print(total_team_damage)
+        other_team.defend(total_team_damage)
 
     def defend(self, damage_amt):
         # This method should calculate our team's total defense.
