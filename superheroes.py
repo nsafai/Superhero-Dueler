@@ -6,7 +6,7 @@ class Ability:
         # Set Ability name
         self.name = name
         # Set attack strength
-        self.attack_strength = attack_strength
+        self.attack_strength = int(attack_strength)
 
     def attack(self):
         # Calculate lowest attack value as an integer. "should be half of highest possible attack value"
@@ -31,12 +31,17 @@ class Hero:
         self.health = health
         self.abilities = list()
         self.armors = list()
+        self.weapons = list()
         self.deaths = 0
         self.kills = 0
 
     def add_ability(self, ability):
         # Add ability to abilities list
         self.abilities.append(ability)
+
+    def add_weapon(self, weapon):
+        # Add ability to abilities list
+        self.weapons.append(weapon)
 
     def attack(self):
         # Run attack() on every ability hero has
@@ -186,92 +191,91 @@ class Armor:
 
 
 class Arena:
-    def __init__(self, team_one_name, team_two_name):
-        self.team_one = Team(team_one_name)
-        self.team_two = Team(team_two_name)
+    def __init__(self, good_guys_team_name, villains_team_name):
+        self.good_guys_team = Team(good_guys_team_name)
+        self.villains_team = Team(villains_team_name)
 
-    def build_team_one(self):
+    def build_good_guys_team(self):
         # This method should allow a user to build team one.
-        building_team = True
+        building_good_guys_team = True
+        good_guys_team_size = 1
 
-        while building_team:
-            print(len(self.team_one.heroes))
-            team_one_instructions = "What heroes are part of team ONE? (When you're done, type 'done'):"
+        while building_good_guys_team:
 
-            # if list is not empty and last item of list is not "done"
-            if (len(self.team_one.heroes) == 0):
-                self.team_one.heroes.append(input(team_one_instructions))
+            good_guy_index = 0
 
-            elif (len(self.team_one.heroes) != 0) and (self.team_one.heroes[-1] != "done"):
-                self.team_one.heroes.append(input(team_one_instructions))
-
-            # if user is done with input and has typed "done" as the last item of list
-            elif (len(self.team_one.heroes) != 0) and self.team_one.heroes[-1] == "done":
-                self.team_one.heroes.pop()
-                break
+            while good_guy_index < (good_guys_team_size):
+                self.good_guys_team.add_hero(
+                    Hero(input("Name one of your favorite heroes (you'll get to name {} total): ".format(good_guys_team_size))))
+                self.good_guys_team.heroes[good_guy_index].add_ability(Ability(
+                    input("What's their superpower?: "), input("How powerful is it? (0-100): ")))
+                self.good_guys_team.heroes[good_guy_index].add_weapon(Weapon(
+                    input("Do they have a weapon, too? If so, what is it: "), input("How powerful is it? (0-100): ")))
+                good_guy_index += 1
 
             else:
-                print("error building team_one")
+                building_good_guys_team = False
 
-
-    def build_team_two(self):
+    def build_villains_team(self):
         # This method should allow user to build team two.
-        building_team = True
+        building_villains_team = True
+        villains_team_size = 1
 
-        while building_team:
-            team_two_instructions = "What heroes are part of team TWO? (When you're done, type 'done':)"
+        while building_villains_team:
 
-            # if list is not empty and last item of list is not "done"
-            if (len(self.team_two.heroes) == 0):
-                self.team_two.heroes.append(input(team_two_instructions))
+            villain_index = 0
 
-            # if user has started input but not specified that they are "done", keep asking for input
-            elif (len(self.team_two.heroes) != 0) and (self.team_two.heroes[-1] != "done"):
-                self.team_two.heroes.append(input(team_two_instructions))
-
-            # if user is done with input and has typed "done" as the last item of list
-            elif (len(self.team_two.heroes) != 0) and self.team_two.heroes[-1] == "done":
-                self.team_two.heroes.pop()
-                break
+            while villain_index < (villains_team_size):
+                self.villains_team.add_hero(
+                    Hero(input("Name one of your favorite villains (you'll get to name {} total): ".format(villains_team_size))))
+                self.villains_team.heroes[villain_index].add_ability(Ability(
+                    input("What's their superpower?: "), input("How powerful is it? (0-100): ")))
+                self.villains_team.heroes[villain_index].add_weapon(Weapon(
+                    input("Do they have a weapon, too? If so, what is it: "), input("How powerful is it? (0-100): ")))
+                villain_index += 1
 
             else:
-                print("error building team_two")
-
+                building_villains_team = False
 
     def team_battle(self):
         # This method should continue to battle teams until
         # one or both teams are dead.
         battling = True
+        print("Attack commencing shortly")
 
         while battling == True:
-            self.team_one.attack(self.team_two)
-            self.team_two.attack(self.team_one)
+            print("the good guys are about to attack!")
+            self.good_guys_team.attack(self.villains_team)
+            print("ohh the good guys did damaage")
+            print("the villains look pissed. they're going to retaliate!")
+            self.villains_team.attack(self.good_guys_team)
+            print("yup, that looked like it hurt. sorry, we're not sorry, good guys!")
 
             winning_team = ""
 
-            team_one_dead = False
-            team_two_dead = False
+            good_guys_team_dead = False
+            villains_team_dead = False
 
-            team_one_deaths = 0
-            team_two_deaths = 0
+            good_guys_team_deaths = 0
+            villains_team_deaths = 0
 
-            for hero in team_one.heroes:
+            for hero in self.good_guys_team.heroes:
                 if hero.health <= 0:
-                    team_one_deaths += 1
+                    good_guys_team_deaths += 1
 
-            for hero in team_two.heroes:
+            for hero in self.villains_team.heroes:
                 if hero.health <= 0:
-                    team_two_deaths += 1
+                    villains_team_deaths += 1
 
-            if team_one_deaths == len(self.team_one.heroes):
-                team_one_dead = True
-                winning_team = self.team_two.name
+            if good_guys_team_deaths == len(self.good_guys_team.heroes):
+                good_guys_team_dead = True
+                winning_team = self.villains_team.name
 
-            if team_two_deaths == len(self.team_one.heroes):
-                team_two_dead = True
-                winning_team = self.team_one.name
+            if villains_team_deaths == len(self.good_guys_team.heroes):
+                villains_team_dead = True
+                winning_team = self.good_guys_team.name
 
-            if team_one_dead == True or team_two_dead == True:
+            if good_guys_team_dead == True or villains_team_dead == True:
                 battling = False
 
         print("Team {} won!".format(winning_team))
@@ -279,11 +283,11 @@ class Arena:
     def show_stats(self):
         # This method should print out the battle statistics
         # including each heroes kill/death ratio.
-        print("Team {} stats:".format(self.team_one_name))
-        print(self.team_one.stats())
+        print("Team {} stats:".format(self.good_guys_team_name))
+        print(self.good_guys_team.stats())
 
-        print("Team {} stats:".format(self.team_two_name))
-        print(self.team_two.stats())
+        print("Team {} stats:".format(self.villains_team_name))
+        print(self.villains_team.stats())
 
 
 if __name__ == "__main__":
@@ -297,6 +301,6 @@ if __name__ == "__main__":
     hero.add_ability(new_ability)
     print(hero.attack())
     arena = Arena("Marvel", "DC")
-    arena.build_team_one()
-    arena.build_team_two()
+    arena.build_good_guys_team()
+    arena.build_villains_team()
     arena.team_battle()
