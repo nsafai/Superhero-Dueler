@@ -23,12 +23,12 @@ class Ability:
         # Update attack value
         self.attack_strength = attack_strength
 
-
 class Hero:
     def __init__(self, name, health=100):
         # Initialize starting values
         self.name = name
         self.health = health
+        self.start_health = health
         self.abilities = list()
         self.armors = list()
         self.weapons = list()
@@ -45,7 +45,7 @@ class Hero:
 
     def add_armor(self, armor):
         # Add ability to abilities list
-        self.weapons.append(armor)
+        self.armors.append(armor)
 
     def attack(self):
         # Run attack() on every ability hero has
@@ -63,12 +63,15 @@ class Hero:
         total_defense = 0
 
         if self.health == 0:
-            return total_defense
+            return 0
 
         else:
-            for armor in self.armors:
-                total_defense += armor.defend()
-                return total_defense
+            if self.armors:
+                for armor in self.armors:
+                    total_defense += armor.defend()
+                    return total_defense
+            else:
+                return 0
 
     def take_damage(self, damage_amt):
         # This method should subtract the damage amount from the
@@ -105,24 +108,34 @@ class Team:
     def remove_hero(self, name):
         # Remove hero from heroes list.
         # If Hero isn't found return 0.
-        for hero in self.heroes:
-            if hero.name == name:
-                self.heroes.remove(hero)
-            else:
-                return 0
+        if self.heroes:
+            for hero in self.heroes:
+                if hero.name == name:
+                    self.heroes.remove(hero)
+                else:
+                    return 0
+        else:
+            return 0
 
     def find_hero(self, name):
         # Find and return hero from heroes list.
         # If Hero isn't found return 0.
-        for hero in self.heroes:
-            return hero
+        if self.heroes:
+            for hero in self.heroes:
+                if hero.name == name:
+                    return hero
+            else:
+                return 0
         else:
             return 0
 
     def view_all_heroes(self):
         # Print out all heroes to the console.
-        for hero in self.heroes:
-            print(hero)
+        if self.heroes:
+            for hero in self.heroes:
+                print(hero.name)
+        else:
+            return 0
 
     def attack(self, other_team):
         # This method should total our teams attack strength and
@@ -166,7 +179,7 @@ class Team:
         # This method should reset all heroes health to their
         # original starting value.
         for hero in self.heroes:
-            hero.health = 100
+            hero.health = start_health
 
     def stats(self):
         # This method should print the ratio of kills/deaths for each member of the team to the screen.
