@@ -84,7 +84,7 @@ class Weapon(Ability):
 
 
 class Team:
-    def init(self, team_name):
+    def __init__(self, team_name):
         # Instantiate resources
         self.name = team_name
         self.heroes = list()
@@ -126,7 +126,6 @@ class Team:
 
         return total_team_damage
 
-
     def defend(self, damage_amt):
         # This method should calculate our team's total defense.
         # Any damage in excess of our team's total defense should be evenly distributed amongst all heroes with the deal_damage() method.
@@ -140,7 +139,7 @@ class Team:
     def deal_damage(self, damage):
         # Divide the total damage amongst all heroes.
         # Return the number of heros that died in attack.
-        damage_per_hero = damage/len(self.heroes)
+        damage_per_hero = damage / len(self.heroes)
         number_of_dead_heroes = 0
 
         for hero in self.heroes:
@@ -161,15 +160,17 @@ class Team:
         # This method should print the ratio of kills/deaths for each member of the team to the screen.
         # This data must be output to the terminal.
         for hero in self.heroes:
-            print("{}:{} is your Kill:Death ratio".format(self.kills,self.deaths))
+            print("{}:{} is your Kill:Death ratio".format(
+                self.kills, self.deaths))
 
     def update_kills(self):
         # This method should update each hero when there is a team kill.
 
         for hero in self.heroes:
 
-            if hero.health <= 0: # check hero isn't dead
+            if hero.health <= 0:  # check hero isn't dead
                 hero.kills += 1
+
 
 class Armor:
     def __init__(self, name, defense):
@@ -184,6 +185,107 @@ class Armor:
         return defense_value
 
 
+class Arena:
+    def __init__(self, team_one_name, team_two_name):
+        self.team_one = Team(team_one_name)
+        self.team_two = Team(team_two_name)
+
+    def build_team_one(self):
+        # This method should allow a user to build team one.
+        building_team = True
+
+        while building_team:
+            print(len(self.team_one.heroes))
+            team_one_instructions = "What heroes are part of team ONE? (When you're done, type 'done'):"
+
+            # if list is not empty and last item of list is not "done"
+            if (len(self.team_one.heroes) == 0):
+                self.team_one.heroes.append(input(team_one_instructions))
+
+            elif (len(self.team_one.heroes) != 0) and (self.team_one.heroes[-1] != "done"):
+                self.team_one.heroes.append(input(team_one_instructions))
+
+            # if user is done with input and has typed "done" as the last item of list
+            elif (len(self.team_one.heroes) != 0) and self.team_one.heroes[-1] == "done":
+                self.team_one.heroes.pop()
+                break
+
+            else:
+                print("error building team_one")
+
+
+    def build_team_two(self):
+        # This method should allow user to build team two.
+        building_team = True
+
+        while building_team:
+            team_two_instructions = "What heroes are part of team TWO? (When you're done, type 'done':)"
+
+            # if list is not empty and last item of list is not "done"
+            if (len(self.team_two.heroes) == 0):
+                self.team_two.heroes.append(input(team_two_instructions))
+
+            # if user has started input but not specified that they are "done", keep asking for input
+            elif (len(self.team_two.heroes) != 0) and (self.team_two.heroes[-1] != "done"):
+                self.team_two.heroes.append(input(team_two_instructions))
+
+            # if user is done with input and has typed "done" as the last item of list
+            elif (len(self.team_two.heroes) != 0) and self.team_two.heroes[-1] == "done":
+                self.team_two.heroes.pop()
+                break
+
+            else:
+                print("error building team_two")
+
+
+    def team_battle(self):
+        # This method should continue to battle teams until
+        # one or both teams are dead.
+        battling = True
+
+        while battling == True:
+            self.team_one.attack(self.team_two)
+            self.team_two.attack(self.team_one)
+
+            winning_team = ""
+
+            team_one_dead = False
+            team_two_dead = False
+
+            team_one_deaths = 0
+            team_two_deaths = 0
+
+            for hero in team_one.heroes:
+                if hero.health <= 0:
+                    team_one_deaths += 1
+
+            for hero in team_two.heroes:
+                if hero.health <= 0:
+                    team_two_deaths += 1
+
+            if team_one_deaths == len(self.team_one.heroes):
+                team_one_dead = True
+                winning_team = self.team_two.name
+
+            if team_two_deaths == len(self.team_one.heroes):
+                team_two_dead = True
+                winning_team = self.team_one.name
+
+            if team_one_dead == True or team_two_dead == True:
+                battling = False
+
+        print("Team {} won!".format(winning_team))
+
+    def show_stats(self):
+        # This method should print out the battle statistics
+        # including each heroes kill/death ratio.
+        print("Team {} stats:".format(self.team_one_name))
+        print(self.team_one.stats())
+
+        print("Team {} stats:".format(self.team_two_name))
+        print(self.team_two.stats())
+
+
 if __name__ == "__main__":
     # If you run this file from the terminal this block is executed.
     hero = Hero("Wonder Woman")
@@ -194,3 +296,7 @@ if __name__ == "__main__":
     new_ability = Ability("Super Human Strength", 800)
     hero.add_ability(new_ability)
     print(hero.attack())
+    arena = Arena("Marvel", "DC")
+    arena.build_team_one()
+    arena.build_team_two()
+    arena.team_battle()
