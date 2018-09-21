@@ -147,7 +147,13 @@ class Team:
             total_team_damage += hero.attack()
 
         print(total_team_damage)
-        other_team.defend(total_team_damage)
+        total_kills = other_team.defend(total_team_damage)
+
+        for hero in self.heroes:
+            hero.add_kill(total_kills)
+
+        for hero in other_team.heroes:
+            hero.deaths = total_kills
 
     def defend(self, damage_amt):
         # This method should calculate our team's total defense.
@@ -159,12 +165,12 @@ class Team:
 
         if damage_amt > total_team_defense:
             net_damage = damage_amt - total_team_defense
-            self.deal_damage(net_damage)
+            return self.deal_damage(net_damage)
 
     def deal_damage(self, damage):
         # Divide the total damage amongst all heroes.
         # Return the number of heros that died in attack.
-        damage_per_hero = damage / len(self.heroes)
+        damage_per_hero = damage // len(self.heroes)
         number_of_dead_heroes = 0
 
         for hero in self.heroes:
@@ -179,7 +185,7 @@ class Team:
         # This method should reset all heroes health to their
         # original starting value.
         for hero in self.heroes:
-            hero.health = start_health
+            hero.health = hero.start_health
 
     def stats(self):
         # This method should print the ratio of kills/deaths for each member of the team to the screen.
@@ -206,7 +212,7 @@ class Armor:
     def defend(self):
         # Return a random value between 0 and the
         # initialized defend strength.
-        defense_value = random.randint(0, self.defense)
+        defense_value = random.randint(0, int(self.defense))
         return defense_value
 
 
@@ -316,14 +322,7 @@ class Arena:
 
 if __name__ == "__main__":
     # If you run this file from the terminal this block is executed.
-    hero = Hero("Wonder Woman")
-    print(hero.attack())
-    ability = Ability("Divine Speed", 300)
-    hero.add_ability(ability)
-    print(hero.attack())
-    new_ability = Ability("Super Human Strength", 800)
-    hero.add_ability(new_ability)
-    print(hero.attack())
+
     arena = Arena("Marvel", "DC")
     arena.build_good_guys_team()
     arena.build_villains_team()
