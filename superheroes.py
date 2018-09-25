@@ -1,5 +1,6 @@
 import random
-
+import os
+line = "\n_______________________________________________________________________________________________\n"
 
 class Ability:
     def __init__(self, name, attack_strength):
@@ -84,7 +85,7 @@ class Hero:
 
     def add_kill(self, num_kills):
         # This method should add the number of kills to self.kills
-        self.kills += 1
+        self.kills += num_kills
 
 
 class Weapon(Ability):
@@ -146,9 +147,11 @@ class Team:
         for hero in self.heroes:
             total_team_damage += hero.attack()
 
-        print(total_team_damage)
-        total_kills = other_team.defend(total_team_damage)
 
+        total_kills = other_team.defend(total_team_damage)
+        print("total kills = {}".format(total_kills))
+
+        # update_kills(total_kills)
         for hero in self.heroes:
             hero.add_kill(total_kills)
 
@@ -165,7 +168,11 @@ class Team:
 
         if damage_amt > total_team_defense:
             net_damage = damage_amt - total_team_defense
+            print("{} did {} damage".format(self.name, net_damage))
             return self.deal_damage(net_damage)
+
+        else:
+            return 0
 
     def deal_damage(self, damage):
         # Divide the total damage amongst all heroes.
@@ -191,8 +198,8 @@ class Team:
         # This method should print the ratio of kills/deaths for each member of the team to the screen.
         # This data must be output to the terminal.
         for hero in self.heroes:
-            print("{}:{} is your Kill:Death ratio".format(
-                self.kills, self.deaths))
+            print("{}:{} is {}'s Kill:Death ratio".format(
+                hero.kills, hero.deaths, hero.name))
 
     def update_kills(self):
         # This method should update each hero when there is a team kill.
@@ -200,7 +207,7 @@ class Team:
         for hero in self.heroes:
 
             if hero.health <= 0:  # check hero isn't dead
-                hero.kills += 1
+                hero.add_kill()
 
 
 class Armor:
@@ -275,11 +282,16 @@ class Arena:
 
         while battling == True:
             print("the good guys are about to attack!")
+            print(line)
             self.good_guys_team.attack(self.villains_team)
+            print(line)
             print("ohh the good guys did damaage")
             print("the villains look pissed. they're going to retaliate!")
+            print(line)
             self.villains_team.attack(self.good_guys_team)
+            print(line)
             print("yup, that looked like it hurt. sorry, we're not sorry, good guys!")
+            print(line)
 
             winning_team = ""
 
@@ -313,17 +325,31 @@ class Arena:
     def show_stats(self):
         # This method should print out the battle statistics
         # including each heroes kill/death ratio.
-        print("Team {} stats:".format(self.good_guys_team_name))
+        print("Team {} stats:".format(self.good_guys_team.name))
         print(self.good_guys_team.stats())
 
-        print("Team {} stats:".format(self.villains_team_name))
+        print("Team {} stats:".format(self.villains_team.name))
         print(self.villains_team.stats())
 
 
 if __name__ == "__main__":
     # If you run this file from the terminal this block is executed.
+    game_is_running = True
 
-    arena = Arena("Marvel", "DC")
+    arena = Arena("Good Guys", "Villains")
     arena.build_good_guys_team()
     arena.build_villains_team()
-    arena.team_battle()
+
+    while game_is_running:
+        arena.team_battle()
+        arena.show_stats()
+        play_again = input("Play again? (Y/N) ")
+
+        if play_again.lower() == "n":
+            print("No problem, see you later! :)")
+            game_is_running = False
+
+        else:
+            os.system('clear')
+            arena.good_guys_team.revive_heroes()
+            arena.villains_team.revive_heroes()
